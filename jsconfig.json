@@ -1,0 +1,19 @@
+{
+    "dependencies": {
+        //"lodash": "^4.17.0"
+    },
+    "typeAcquisition": {
+        "include": [
+            "fabric"
+        ]
+    },
+    "compilerOptions": {
+        "target": "es6"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "src/**/*"
+    ]
+}
