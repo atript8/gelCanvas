@@ -10,22 +10,34 @@
 </head>
 
 <body style="background: #ddd">
-    <h4>Gel Canvas Demo</h1>
-    <div id="controls"></div>
-    <div id="container"
-        style="border: 1px solid #111; width: 800px; height: 600px; position: relative; user-select: none;">
+    <h1>Gel Canvas Demo</h1>
+    <div id="controls" style="width: 50em">
+        <div id="btnBar">
+            <input type="file" id="imgLoader" onchange="gelCanvas.addImageFromFile(event)" />
+            <hr>    
+            <button type="button" onclick="gelCanvas.reset()">Reset Canvas</button>
+            <button type="button" onclick="gelCanvas.duplicate()">Duplicate Selected</button>
+            <button type="button" onclick="gelCanvas.delete()">Delete Selected</button>
+            <hr>
+            <button type="button" onclick="gelCanvas.uploadAsImage(doWithData)">Upload to Server</button>
+        </div>
+    </div>
+    <br>
+    <div id="container" style="border: 1px solid #111; width: 800px; height: 600px; position: relative; user-select: none;">
         <canvas id="gCanvas" />
     </div>
-    <img id="sampleGel" src="" />
+    <img id="sampleGel" src="gel-400x300.jpg" hidden/>
 </body>
 <script>
-    gelCanvas.init('container', 'controls', 
-        gelConfigurations["novex"], [
-        {text: "Expression Batch 1", color: "#123"},
-        {text: "Expression Batch 2", color: "#623"},
-        {text: "Expression Batch 3", color: "#723"}
+    gelCanvas.init('container', gelConfigurations["novex"], [
+        {text: "Expression Batch 1", color: "#a23"},
+        {text: "Expression Batch 2", color: "#6af"},
+        {text: "Expression Batch 3", color: "#2a4"}
     ]);
-    gelCanvas.addImageFromElement('');
+
+    function doWithData(data) {
+        alert ("Data: \n" + data);
+    }
 </script>
 
 </html>

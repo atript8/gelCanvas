@@ -5,16 +5,14 @@ var gelCanvas = (function () {
     var weightMarkers;
     var containerHtmlId;
     var canvasHtmlId;
-    var controlsHtmlId;
-    var selectedImage;
 
     var settings = {
         canvas: {},
         tagProps: { 
             init: {
-                leftOffset: 80, 
+                leftOffset: 70, 
                 bottomOffset: 100,
-                tagDistance: 40, 
+                tagDistance: 45, 
             },
             common: {
                 angle: -45,
@@ -24,7 +22,7 @@ var gelCanvas = (function () {
         },
         markerProps: { 
             init: {
-                topOffset: 150,
+                topOffset: 130,
                 markerViewHeight: 400,
             },
             textProps: {
@@ -39,9 +37,8 @@ var gelCanvas = (function () {
         },
     };
 
-    function init(containerDivId, controlsDivId, markers, tags) {
+    function init(containerDivId, markers, tags) {
         containerHtmlId = containerDivId || containerHtmlId;
-        controlsHtmlId = controlsDivId || controlsHtmlId;
         container = document.getElementById(containerHtmlId);
         canvasHtmlId = container.getElementsByTagName("canvas")[0];
         if (!canvasHtmlId) {
@@ -55,7 +52,7 @@ var gelCanvas = (function () {
     }
 
     function resetCanvas() {
-        if (canvas) canvas.destroy();
+        if (canvas) canvas.dispose();
         canvas = new fabric.Canvas(canvasHtmlId);
 
         resizeCanvasToContainer();
@@ -124,30 +121,39 @@ var gelCanvas = (function () {
         canvas.add(rect);
     }
 
+    function getImageDropLocation() {
+        return {
+            left: settings.tagProps.init.leftOffset, 
+            top: settings.markerProps.init.topOffset
+        };
+    }
+ 
     function addImageFromElement(divName) {
         var imgElement = document.getElementById(divName);
-        var location = getRandomLeftTop();
-        var imgInstance = new fabric.Image(imgElement, {
-            left: location.left,
-            top: location.top,
-        });
+        var imgInstance = new fabric.Image(imgElement, getImageDropLocation());
 
         canvas.add(imgInstance);
         canvas.renderAll();
     }
 
-    function addImageFromUrl(url) {
-        fabric.Image.fromURL(url, function (oImg) {
-            canvas.add(oImg);
-        });
-    }
+    function addImageFromFile(e) {
+        var reader = new FileReader();
+        reader.onload = function (event){
+            var imgObj = new Image();
+            imgObj.src = event.target.result;
+            imgObj.onload = function () {
+                var image = new fabric.Image(imgObj);
+                image.set(getImageDropLocation());
+                canvas.add(image);
+                canvas.renderAll();
+            }
+        }
 
-    function getRandomLeftTop() {
-        return { left: 100, top: 200 };
+        reader.readAsDataURL(e.target.files[0]);
     }
 
     function reset() {
-        if (containerHtmlId) {
+        if (!containerHtmlId) {
             console.log("Canvas was never initialized (with call to 'init').");
             return;
         }
@@ -191,31 +197,33 @@ var gelCanvas = (function () {
         var text = new fabric.text();
     }
 
-    function startCrop() {
-
-    }
-
-    function crop() {
-
-    }
-
-    function stopCrop() {
-
-    }
-
     function getCanvas() {
         return canvas;
     }
 
-    function renderControls() {
-        // add image
-        // delete
-        // draw
-        // selection toggle
-        // add text
-        // crop
-        // save
-        // upload
+    function deleteObject() {
+        canvas.getActiveObjects().forEach(function (object) {
+            canvas.remove(object);
+        });
+    }
+
+    function duplicate() {
+        canvas.getActiveObjects().forEach(function (ob) {
+            ob.clone(function (cl) {
+                if (cl.left < 0) {
+                    cl.left += canvas.getCenter().left;
+                    cl.top += canvas.getCenter().top;
+                } else {
+                    cl.left += 50;
+                }
+                canvas.add(cl);
+            });
+        });
+    }
+
+    function uploadAsImage(callback) {
+        var data = canvas.toDataURL();
+        callback(data);
     }
 
     return {
@@ -223,8 +231,11 @@ var gelCanvas = (function () {
         reset: reset,
         addLaneTag: addLaneTag,
         addWeightMarker: addWeightMarker,
-        addImageFromUrl: addImageFromUrl,
-        addImageFromElement: addImageFromElement,
-        getCanvas: getCanvas
+        addImageFromFile: addImageFromFile,
+        getCanvas: getCanvas,
+        delete: deleteObject,
+        duplicate: duplicate,
+        //uploadAsJson: uploadAsJson,
+        uploadAsImage: uploadAsImage
     };
 })();
