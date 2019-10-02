@@ -232,6 +232,7 @@ var gelCanvas = (function () {
         addLaneTag: addLaneTag,
         addWeightMarker: addWeightMarker,
         addImageFromFile: addImageFromFile,
+        addImageFromElement: addImageFromElement,
         getCanvas: getCanvas,
         delete: deleteObject,
         duplicate: duplicate,

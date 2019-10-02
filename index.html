@@ -13,6 +13,8 @@
     <h1>Gel Canvas Demo</h1>
     <div id="controls" style="width: 50em">
         <div id="btnBar">
+            <button type="button" onclick="gelCanvas.addImageFromElement('sampleGel')">Add Sample Image from img</button>
+            ||
             <input type="file" id="imgLoader" onchange="gelCanvas.addImageFromFile(event)" />
             <hr>    
             <button type="button" onclick="gelCanvas.reset()">Reset Canvas</button>
